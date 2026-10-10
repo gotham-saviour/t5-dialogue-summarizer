@@ -129,3 +129,4 @@ The inference pipeline is served via an asynchronous **FastAPI** web application
 2. **Hardware Acceleration Auto-Detection:** Dynamically routes tensor execution to `NVIDIA CUDA` if available, `Apple MPS` on macOS, or multi-threaded `CPU` execution.
 3. **Pydantic Data Contracts:** Enforces input schema validation (character limits, whitespace stripping) and formats structured responses with latency benchmarks.
 4. **Interactive Jinja2 Dashboard:** Serves a responsive web UI equipped with 1-click dialogue presets, character counters, execution latency badges, and clipboard integrations.
+
