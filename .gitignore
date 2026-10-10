@@ -1,0 +1,63 @@
+# Python Bytecode and Compilation
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Large Model Weights & Checkpoints (Exceeds GitHub 100MB Limit)
+*.safetensors
+*.pt
+*.bin
+*.pth
+results/
+checkpoint-*/
+runs/
+/saved_summary_model/
+
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+parts/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Testing & Cache
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# Editor & IDE configs
+.vscode/
+*.code-workspace
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS specific files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Environment Variables & Secrets
+.env
+.env.local
+.env.*.local
+
+# Scratch and Temporary Artifacts
+scratch/
+temp/
+tmp/

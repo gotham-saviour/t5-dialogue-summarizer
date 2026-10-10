@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T5 Dialogue Summarizer | Deep Learning & NLP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --primary-light: #EEF2FF;
+            --secondary: #06B6D4;
+            --surface: #FFFFFF;
+            --background: #F8FAFC;
+            --card-border: #E2E8F0;
+            --text-main: #0F172A;
+            --text-muted: #64748B;
+            --accent-success: #10B981;
+            --accent-purple: #8B5CF6;
+            --radius-lg: 16px;
+            --radius-md: 10px;
+            --radius-sm: 6px;
+            --shadow-subtle: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            --shadow-float: 0 20px 25px -5px rgba(0, 0, 0, 0.07), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(180deg, #F1F5F9 0%, #F8FAFC 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.6;
+            padding: 32px 16px;
+        }
+
+        .wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Top Header */
+        header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .badge-bar {
+            display: inline-flex;
+            gap: 8px;
+            background: #EDE9FE;
+            color: #6D28D9;
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-size: 2.3rem;
+            font-weight: 800;
+            color: #1E1B4B;
+            letter-spacing: -0.03em;
+            margin-bottom: 6px;
+        }
+
+        h1 span {
+            background: linear-gradient(135deg, #4F46E5 0%, #06B6D4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.02rem;
+            max-width: 620px;
+            margin: 0 auto;
+        }
+
+        /* Main Container */
+        .main-card {
+            background: var(--surface);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            box-shadow: var(--shadow-float);
+        }
+
+        /* Preset Samples Bar */
+        .samples-section {
+            margin-bottom: 24px;
+        }
+
+        .samples-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .sample-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .btn-sample {
+            background: #F1F5F9;
+            border: 1px solid #CBD5E1;
+            color: #334155;
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-sample:hover {
+            background: var(--primary-light);
+            border-color: #C7D2FE;
+            color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        /* Form Area */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .textarea-container {
+            position: relative;
+        }
+
+        textarea {
+            width: 100%;
+            height: 180px;
+            padding: 16px;
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            background: #FAFAFC;
+            resize: vertical;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+            background: #FFFFFF;
+        }
+
+        .input-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            padding: 4px 6px;
+        }
+
+        .form-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .btn-clear {
+            background: transparent;
+            border: 1px solid var(--card-border);
+            color: var(--text-muted);
+            padding: 10px 18px;
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-clear:hover {
+            background: #F1F5F9;
+            color: var(--text-main);
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #4F46E5 0%, #4338CA 100%);
+            color: #FFFFFF;
+            border: none;
+            padding: 12px 28px;
+            border-radius: var(--radius-md);
+            font-size: 0.98rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Result Section */
+        #summary-container {
+            margin-top: 28px;
+            padding-top: 24px;
+            border-top: 1px dashed var(--card-border);
+            display: none;
+        }
+
+        .summary-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .summary-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #1E1B4B;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .meta-badges {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pill-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .pill-time {
+            background: #FEF3C7;
+            color: #B45309;
+        }
+
+        .pill-reduction {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .pill-device {
+            background: #E0E7FF;
+            color: #3730A3;
+        }
+
+        .summary-box {
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: var(--radius-md);
+            padding: 20px;
+            position: relative;
+            font-size: 1.02rem;
+            color: #1E293B;
+            line-height: 1.7;
+        }
+
+        .btn-copy {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            background: #FFFFFF;
+            border: 1px solid #CBD5E1;
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-copy:hover {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* Technical Info Grid */
+        .tech-footer {
+            margin-top: 36px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .tech-card {
+            background: var(--surface);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 18px;
+            font-size: 0.85rem;
+        }
+
+        .tech-card h4 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+
+        .tech-card p {
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Spinner */
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+            <div class="badge-bar">
+                ⚡ Fine-Tuned T5-Small &bull; SAMSum Corpus &bull; Beam Search (k=4)
+            </div>
+            <h1>Abstractive <span>Dialogue Summarizer</span></h1>
+            <p class="subtitle">
+                Synthesize complex multi-turn conversational transcripts into concise, grammatically structured executive summaries in real-time.
+            </p>
+        </header>
+
+        <main class="main-card">
+            <!-- Preset Samples Bar -->
+            <div class="samples-section">
+                <div class="samples-label">
+                    <span>💡 Load Benchmark Sample Dialogues</span>
+                </div>
+                <div class="sample-buttons" id="sample-buttons">
+                    <!-- Populated dynamically or static fallback -->
+                </div>
+            </div>
+
+            <!-- Summarization Form -->
+            <form id="summarize-form">
+                <div class="textarea-container">
+                    <textarea 
+                        id="dialogue-input" 
+                        placeholder="Paste multi-turn conversation or chat transcript here (e.g. Maya: Did we merge the pull request? John: Yes, all integration tests passed.)..." 
+                        required
+                    ></textarea>
+                </div>
+
+                <div class="input-stats">
+                    <span id="char-count">0 characters | 0 words</span>
+                    <span>Press <strong>Ctrl + Enter</strong> to summarize</span>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-clear" id="btn-clear">Clear Input</button>
+                    <button type="submit" class="btn-submit" id="btn-submit">
+                        <span id="btn-text">Generate Summary</span>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Summary Output Container -->
+            <div id="summary-container">
+                <div class="summary-header">
+                    <div class="summary-title">
+                        <span>📋 Executive Summary</span>
+                    </div>
+                    <div class="meta-badges" id="meta-badges">
+                        <span class="pill-badge pill-time" id="badge-time">⚡ -- ms</span>
+                        <span class="pill-badge pill-reduction" id="badge-reduction">📉 --% reduced</span>
+                        <span class="pill-badge pill-device" id="badge-device">💻 Device: Auto</span>
+                    </div>
+                </div>
+
+                <div class="summary-box">
+                    <button class="btn-copy" id="btn-copy" title="Copy to clipboard">Copy</button>
+                    <p id="summary-text"></p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Technical Footprint -->
+        <section class="tech-footer">
+            <div class="tech-card">
+                <h4>Architecture: Google T5</h4>
+                <p>Encoder-Decoder Transformer utilizing relative position biases and unified text-to-text formulation.</p>
+            </div>
+            <div class="tech-card">
+                <h4>Corpus: SAMSum</h4>
+                <p>Fine-tuned on conversational messenger dialogues with multi-speaker turn taking.</p>
+            </div>
+            <div class="tech-card">
+                <h4>Decoding: Beam Search</h4>
+                <p>4-beam hypothesis tracking with <code>no_repeat_ngram_size=3</code> to prevent degenerative repetition.</p>
+            </div>
+        </section>
+
+        <footer>
+            <p>Designed and built for production AI workflows &bull; MIT License</p>
+        </footer>
+    </div>
+
+    <script>
+        const sampleButtonsContainer = document.getElementById("sample-buttons");
+        const dialogueInput = document.getElementById("dialogue-input");
+        const charCount = document.getElementById("char-count");
+        const summarizeForm = document.getElementById("summarize-form");
+        const btnSubmit = document.getElementById("btn-submit");
+        const btnText = document.getElementById("btn-text");
+        const btnClear = document.getElementById("btn-clear");
+        const summaryContainer = document.getElementById("summary-container");
+        const summaryText = document.getElementById("summary-text");
+        const badgeTime = document.getElementById("badge-time");
+        const badgeReduction = document.getElementById("badge-reduction");
+        const badgeDevice = document.getElementById("badge-device");
+        const btnCopy = document.getElementById("btn-copy");
+
+        // Update word & character counter
+        function updateStats() {
+            const val = dialogueInput.value;
+            const chars = val.length;
+            const words = val.trim() ? val.trim().split(/\s+/).length : 0;
+            charCount.innerText = `${chars} characters | ${words} words`;
+        }
+
+        dialogueInput.addEventListener("input", updateStats);
+
+        // Fetch sample dialogues from API
+        async function loadSamples() {
+            try {
+                const res = await fetch("/api/samples");
+                if (res.ok) {
+                    const samples = await res.json();
+                    sampleButtonsContainer.innerHTML = "";
+                    samples.forEach(s => {
+                        const btn = document.createElement("button");
+                        btn.type = "button";
+                        btn.className = "btn-sample";
+                        btn.innerHTML = `💬 <span>${s.title}</span>`;
+                        btn.addEventListener("click", () => {
+                            dialogueInput.value = s.dialogue;
+                            updateStats();
+                            dialogueInput.focus();
+                        });
+                        sampleButtonsContainer.appendChild(btn);
+                    });
+                }
+            } catch (err) {
+                console.warn("Could not load samples dynamically:", err);
+            }
+        }
+        loadSamples();
+
+        // Clear button
+        btnClear.addEventListener("click", () => {
+            dialogueInput.value = "";
+            updateStats();
+            summaryContainer.style.display = "none";
+            dialogueInput.focus();
+        });
+
+        // Keyboard shortcut: Ctrl + Enter
+        dialogueInput.addEventListener("keydown", (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+                e.preventDefault();
+                summarizeForm.dispatchEvent(new Event("submit"));
+            }
+        });
+
+        // Copy button
+        btnCopy.addEventListener("click", async () => {
+            if (!summaryText.innerText) return;
+            try {
+                await navigator.clipboard.writeText(summaryText.innerText);
+                btnCopy.innerText = "Copied!";
+                setTimeout(() => { btnCopy.innerText = "Copy"; }, 2000);
+            } catch (err) {
+                console.error("Clipboard copy failed:", err);
+            }
+        });
+
+        // Submit form
+        summarizeForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const dialogue = dialogueInput.value.trim();
+            if (!dialogue) return;
+
+            btnSubmit.disabled = true;
+            btnText.innerHTML = '<span class="spinner"></span> Synthesizing...';
+            summaryContainer.style.display = "block";
+            summaryText.innerText = "Computing abstractive summary via T5 Beam Search...";
+
+            try {
+                const response = await fetch("/summarize/", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ dialogue }),
+                });
+
+                if (!response.ok) {
+                    const errData = await response.json().catch(() => ({}));
+                    throw new Error(errData.detail || `Server error (${response.status})`);
+                }
+
+                const data = await response.json();
+                summaryText.innerText = data.summary || "No summary returned.";
+                badgeTime.innerText = `⚡ ${data.inference_time_ms} ms`;
+                badgeReduction.innerText = `📉 ${data.compression_ratio}% reduction`;
+                badgeDevice.innerText = `💻 ${data.device}`;
+            } catch (err) {
+                summaryText.innerText = `❌ Error: ${err.message}`;
+            } finally {
+                btnSubmit.disabled = false;
+                btnText.innerText = "Generate Summary";
+            }
+        });
+    </script>
+</body>
+</html>
