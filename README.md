@@ -180,17 +180,6 @@ Content-Type: application/json
 
 ---
 
-## 💼 Resume Highlight Points
-
-For software engineering and machine learning resumes:
-
-- **T5 Dialogue Summarizer (PyTorch, Transformers, FastAPI, Docker):**
-  - Fine-tuned Google T5 (60.5M parameters) on the SAMSum corpus for multi-turn abstractive dialogue summarization, reducing cross-entropy loss by **89.8% (3.69 $\rightarrow$ 0.37)** across 3,000 steps.
-  - Implemented 4-beam hypothesis search with `no_repeat_ngram_size=3` and SentencePiece tokenization, eliminating repetitive hallucinations and producing coherent third-person narratives.
-  - Engineered an asynchronous FastAPI microservice with dynamic device detection (CUDA/MPS/CPU) and custom Jinja2 UI, achieving **<60ms inference latency** on GPU.
-  - Packaged the complete inference pipeline in a hardened Docker container with non-root security and health check telemetry for cloud-native deployment.
-
----
 
 ## 📜 License
 
